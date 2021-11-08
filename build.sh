@@ -36,7 +36,7 @@ patch -p01 <../quiche/extras/nginx/nginx-1.16.patch
 	--add-module=../ngx_brotli \
 	--with-openssl=../quiche/deps/boringssl \
 	--with-quiche=../quiche
-make
+make -j$(nproc)
 make install
 cd ..
 mkdir -p /etc/nginx/http.d/ /etc/nginx/snippets/
