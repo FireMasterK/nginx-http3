@@ -39,8 +39,11 @@ patch -p01 <../quiche/extras/nginx/nginx-1.16.patch
 make
 make install
 cd ..
-mkdir -p /etc/nginx/http.d/
+mkdir -p /etc/nginx/http.d/ /etc/nginx/snippets/
+install -dm700 -o nginx -g nginx /var/lib/nginx/tmp
 install -Dm644 nginx.conf /etc/nginx/nginx.conf
+install -Dm644 https-config.conf /etc/nginx/snippets/https-config.conf
 if ! [ -e /etc/nginx/http.d/default.conf ]; then
 	install -m644 default.conf /etc/nginx/http.d/default.conf
 fi
+openssl rand 80 >/etc/nginx/ticket.key
