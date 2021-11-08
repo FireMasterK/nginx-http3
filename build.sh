@@ -3,12 +3,13 @@ addgroup -S nginx
 adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx
 curl -O https://nginx.org/download/nginx-1.16.1.tar.gz
 tar xvzf nginx-1.16.1.tar.gz
-git clone --depth=1 --recursive https://github.com/cloudflare/quiche
+git clone --depth=1 --recursive --shallow-submodules https://github.com/cloudflare/quiche
+git clone --depth=1 --recursive --shallow-submodules https://github.com/google/ngx_brotli
 mv nginx-1.16.1 nginx
 cd nginx
 patch -p01 <../quiche/extras/nginx/nginx-1.16.patch
 ./configure \
-	--prefix=/etc/nginx \
+	--prefix=/var/lib/nginx \
 	--sbin-path=/usr/sbin/nginx \
 	--modules-path=/etc/nginx/modules \
 	--conf-path=/etc/nginx/nginx.conf \
@@ -32,7 +33,14 @@ patch -p01 <../quiche/extras/nginx/nginx-1.16.patch
 	--with-http_gunzip_module \
 	--with-http_addition_module \
 	--with-stream_ssl_preread_module \
+	--add-module=../ngx_brotli \
 	--with-openssl=../quiche/deps/boringssl \
 	--with-quiche=../quiche
 make
 make install
+cd ..
+mkdir -p /etc/nginx/http.d/
+install -Dm644 nginx.conf /etc/nginx/nginx.conf
+if ! [ -e /etc/nginx/http.d/default.conf ]; then
+	install -m644 default.conf /etc/nginx/http.d/default.conf
+fi

@@ -16,6 +16,7 @@ RUN apk add --no-cache gcc \
     g++ \
     linux-headers
 
+COPY *.conf ./
 COPY build.sh .
 
 RUN ./build.sh
