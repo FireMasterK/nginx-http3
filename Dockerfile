@@ -13,7 +13,8 @@ RUN apk add --no-cache gcc \
     patch \
     rust \
     cargo \
-    g++
+    g++ \
+    linux-headers
 
 COPY build.sh .
 

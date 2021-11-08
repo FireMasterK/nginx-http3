@@ -1,4 +1,4 @@
-apk add --no-cache gcc \
+apk add gcc \
     libc-dev \
     make \
     pcre-dev \
@@ -9,4 +9,5 @@ apk add --no-cache gcc \
     patch \
     rust \
     cargo \
-    g++
+    g++ \
+    linux-headers
