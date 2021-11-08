@@ -46,6 +46,6 @@ install -Dm644 https-config.conf /etc/nginx/snippets/https-config.conf
 if ! [ -e /etc/nginx/http.d/default.conf ]; then
 	install -m644 default.conf /etc/nginx/http.d/default.conf
 fi
-install -Dm755 nginx.initd ./etc/init.d/nginx
-install -Dm644 nginx.confd ./etc/conf.d/nginx
+install -Dm755 nginx.initd /etc/init.d/nginx
+install -Dm644 nginx.confd /etc/conf.d/nginx
 openssl rand 80 >/etc/nginx/ticket.key
