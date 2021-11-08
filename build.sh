@@ -35,7 +35,8 @@ patch -p01 <../quiche/extras/nginx/nginx-1.16.patch
 	--with-stream_ssl_preread_module \
 	--add-module=../ngx_brotli \
 	--with-openssl=../quiche/deps/boringssl \
-	--with-quiche=../quiche
+	--with-quiche=../quiche \
+	--with-cc-opt="-O3 -march=native -flto"
 make -j$(nproc)
 make install
 cd ..

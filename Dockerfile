@@ -14,9 +14,10 @@ RUN apk add --no-cache gcc \
     rust \
     cargo \
     g++ \
-    linux-headers
+    linux-headers \
+    openssl
 
-COPY *.conf ./
+COPY *.conf nginx.*d ./
 COPY build.sh .
 
 RUN ./build.sh

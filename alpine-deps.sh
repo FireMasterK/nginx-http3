@@ -10,4 +10,5 @@ apk add gcc \
     rust \
     cargo \
     g++ \
-    linux-headers
+    linux-headers \
+    openssl
