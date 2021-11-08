@@ -13,8 +13,7 @@ RUN apk add --no-cache gcc \
     patch \
     rust \
     cargo \
-    g++ \
-    nginx
+    g++
 
 COPY build.sh .
 
