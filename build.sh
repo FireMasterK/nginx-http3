@@ -7,7 +7,7 @@ git clone --depth=1 --recursive --shallow-submodules https://github.com/cloudfla
 git clone --depth=1 --recursive --shallow-submodules https://github.com/google/ngx_brotli
 mv nginx-1.16.1 nginx
 cd nginx
-patch -p01 <../quiche/extras/nginx/nginx-1.16.patch
+patch -p01 <../quiche/nginx/nginx-1.16.patch
 ./configure \
 	--prefix=/var/lib/nginx \
 	--sbin-path=/usr/sbin/nginx \
@@ -34,9 +34,9 @@ patch -p01 <../quiche/extras/nginx/nginx-1.16.patch
 	--with-http_addition_module \
 	--with-stream_ssl_preread_module \
 	--add-module=../ngx_brotli \
-	--with-openssl=../quiche/deps/boringssl \
+	--with-openssl=../quiche/quiche/deps/boringssl \
 	--with-quiche=../quiche \
-	--with-cc-opt="-O3 -march=native -flto"
+	--with-cc-opt="-O3 -march=native -flto -Wno-vla-parameter"
 make -j$(nproc)
 make install
 cd ..
