@@ -17,6 +17,7 @@ depend() {
 
 start_pre() {
 	checkpath --directory --owner nginx:nginx ${pidfile%/*}
+	ulimit -n 8192
 	$command $command_args -t -q
 }
 
