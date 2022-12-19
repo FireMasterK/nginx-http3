@@ -2,11 +2,16 @@ FROM alpine:edge
 
 WORKDIR /build
 
-RUN apk add --no-cache gcc \
+RUN --mount=type=cache,target=/var/cache/apk \
+    --mount=type=cache,target=/var/lib/apk \
+    apk add --no-cache gcc \
     libc-dev \
     make \
     pcre-dev \
     zlib-dev \
+    zstd-dev \
+    liburing-dev \
+    libatomic_ops-dev \
     curl \
     git \
     cmake \
@@ -15,7 +20,8 @@ RUN apk add --no-cache gcc \
     cargo \
     g++ \
     linux-headers \
-    openssl
+    openssl \
+    bash
 
 COPY *.conf nginx.*d ./
 COPY build.sh .
