@@ -1,7 +1,5 @@
 set -e
 rm -rf quiche zestginx
-addgroup -S nginx
-adduser -D -S -h /var/cache/nginx -s /sbin/nologin -G nginx nginx
 git clone --depth=1 --recursive --shallow-submodules https://github.com/FireMasterK/zestginx
 cd zestginx
 ./configure \

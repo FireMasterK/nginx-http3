@@ -25,5 +25,7 @@ RUN --mount=type=cache,target=/var/cache/apk \
 
 COPY *.conf nginx.*d ./
 COPY build.sh .
+COPY setup-user.sh .
 
+RUN ./setup-user.sh
 RUN ./build.sh
