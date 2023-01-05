@@ -1,4 +1,4 @@
 nginx/
-quiche/
-nginx-*.tar.gz
+openssl/
+*.tar.gz
 Dockerfile

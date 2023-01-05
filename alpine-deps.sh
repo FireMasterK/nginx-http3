@@ -11,4 +11,5 @@ apk add gcc \
     cargo \
     g++ \
     linux-headers \
-    openssl
+    openssl \
+    perl
