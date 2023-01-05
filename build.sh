@@ -1,7 +1,12 @@
 set -e
-rm -rf quiche zestginx
-git clone --depth=1 --recursive --shallow-submodules https://github.com/FireMasterK/zestginx
-cd zestginx
+rm -rf quiche nginx ngx_brotli nginx-1.16.1.tar.gz
+curl -O https://nginx.org/download/nginx-1.16.1.tar.gz
+tar xvzf nginx-1.16.1.tar.gz
+git clone --depth=1 --recursive --shallow-submodules https://github.com/cloudflare/quiche
+git clone --depth=1 --recursive --shallow-submodules https://github.com/google/ngx_brotli
+mv nginx-1.16.1 nginx
+cd nginx
+patch -p01 <../quiche/nginx/nginx-1.16.patch
 ./configure \
 	--prefix=/var/lib/nginx \
 	--sbin-path=/usr/sbin/nginx \
@@ -18,8 +23,18 @@ cd zestginx
 	--http-scgi-temp-path=/var/lib/nginx/tmp/scgi \
 	--user=nginx \
 	--group=nginx \
-	--without-http_geoip_module \
-	--without-stream_geoip_module \
+	--with-http_ssl_module \
+	--with-http_v2_module \
+	--with-http_v3_module \
+	--with-file-aio \
+	--with-http_sub_module \
+	--with-threads \
+	--with-http_gunzip_module \
+	--with-http_addition_module \
+	--with-stream_ssl_preread_module \
+	--add-module=../ngx_brotli \
+	--with-openssl=../quiche/quiche/deps/boringssl \
+	--with-quiche=../quiche \
 	--with-cc-opt="-O3 -march=native -flto -Wno-vla-parameter"
 make -j$(nproc)
 make install

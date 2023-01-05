@@ -3,9 +3,6 @@ apk add gcc \
     make \
     pcre-dev \
     zlib-dev \
-    zstd-dev \
-    liburing-dev \
-    libatomic_ops-dev \
     curl \
     git \
     cmake \
@@ -14,5 +11,4 @@ apk add gcc \
     cargo \
     g++ \
     linux-headers \
-    openssl \
-    bash
+    openssl

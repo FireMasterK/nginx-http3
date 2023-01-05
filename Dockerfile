@@ -9,9 +9,6 @@ RUN --mount=type=cache,target=/var/cache/apk \
     make \
     pcre-dev \
     zlib-dev \
-    zstd-dev \
-    liburing-dev \
-    libatomic_ops-dev \
     curl \
     git \
     cmake \
@@ -20,8 +17,7 @@ RUN --mount=type=cache,target=/var/cache/apk \
     cargo \
     g++ \
     linux-headers \
-    openssl \
-    bash
+    openssl
 
 COPY *.conf nginx.*d ./
 COPY build.sh .
