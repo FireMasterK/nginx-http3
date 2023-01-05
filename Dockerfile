@@ -17,7 +17,8 @@ RUN --mount=type=cache,target=/var/cache/apk \
     cargo \
     g++ \
     linux-headers \
-    openssl
+    openssl \
+    perl
 
 COPY *.conf nginx.*d ./
 COPY build.sh .

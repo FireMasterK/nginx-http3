@@ -1,13 +1,12 @@
 set -e
-rm -rf quiche nginx ngx_brotli nginx-1.16.1.tar.gz
-curl -O https://nginx.org/download/nginx-1.16.1.tar.gz
-tar xvzf nginx-1.16.1.tar.gz
-git clone --depth=1 --recursive --shallow-submodules https://github.com/cloudflare/quiche
+rm -rf nginx ngx_brotli openssl nginx.tar.gz
+curl -o nginx.tar.gz https://hg.nginx.org/nginx-quic/archive/quic.tar.gz
+tar xvzf nginx.tar.gz
+git clone --depth=1 --recursive --shallow-submodules -b openssl-3.0.7+quic1 https://github.com/quictls/openssl
 git clone --depth=1 --recursive --shallow-submodules https://github.com/google/ngx_brotli
-mv nginx-1.16.1 nginx
+mv nginx-quic-* nginx
 cd nginx
-patch -p01 <../quiche/nginx/nginx-1.16.patch
-./configure \
+./auto/configure \
 	--prefix=/var/lib/nginx \
 	--sbin-path=/usr/sbin/nginx \
 	--modules-path=/etc/nginx/modules \
@@ -33,8 +32,8 @@ patch -p01 <../quiche/nginx/nginx-1.16.patch
 	--with-http_addition_module \
 	--with-stream_ssl_preread_module \
 	--add-module=../ngx_brotli \
-	--with-openssl=../quiche/quiche/deps/boringssl \
-	--with-quiche=../quiche \
+	--with-openssl=../openssl \
+	--with-openssl-opt=enable-ktls \
 	--with-cc-opt="-O3 -march=native -flto -Wno-vla-parameter"
 make -j$(nproc)
 make install
