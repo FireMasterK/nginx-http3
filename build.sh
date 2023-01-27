@@ -34,7 +34,9 @@ cd nginx
 	--add-module=../ngx_brotli \
 	--with-openssl=../openssl \
 	--with-openssl-opt=enable-ktls \
-	--with-cc-opt="-O3 -march=native -flto -Wno-vla-parameter"
+	--with-cc-opt="-O3 -march=native -flto -Wno-sign-compare" \
+	--with-ld-opt="-fuse-ld=mold -flto" \
+	--with-cc="clang"
 make -j$(nproc)
 make install
 cd ..

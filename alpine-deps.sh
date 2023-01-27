@@ -7,9 +7,10 @@ apk add gcc \
     git \
     cmake \
     patch \
-    rust \
-    cargo \
-    g++ \
+    mold \
+    gcc \
+    clang \
+    llvm-dev \
     linux-headers \
     openssl \
     perl
