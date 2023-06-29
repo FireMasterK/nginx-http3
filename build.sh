@@ -2,7 +2,7 @@ set -e
 rm -rf nginx ngx_brotli openssl nginx.tar.gz
 curl -o nginx.tar.gz https://hg.nginx.org/nginx-quic/archive/quic.tar.gz
 tar xvzf nginx.tar.gz
-git clone --depth=1 --recursive --shallow-submodules -b openssl-3.0.8-quic1 https://github.com/quictls/openssl
+git clone --depth=1 --recursive --shallow-submodules -b openssl-3.0.9-quic1 https://github.com/quictls/openssl
 git clone --depth=1 --recursive --shallow-submodules https://github.com/google/ngx_brotli
 mv nginx-quic-* nginx
 cd nginx
