@@ -4,7 +4,7 @@ curl -o nginx.tar.gz https://hg.nginx.org/nginx/archive/release-1.25.1.tar.gz
 tar xvzf nginx.tar.gz
 git clone --depth=1 --recursive --shallow-submodules -b openssl-3.0.9-quic1 https://github.com/quictls/openssl
 git clone --depth=1 --recursive --shallow-submodules https://github.com/google/ngx_brotli
-mv nginx-quic-* nginx
+mv nginx-release-* nginx
 cd nginx
 ./auto/configure \
 	--prefix=/var/lib/nginx \
