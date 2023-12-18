@@ -8,8 +8,8 @@ git clone --depth=1 --recursive --shallow-submodules -b openssl-3.1.4-quic1 http
 git clone --depth=1 --recursive --shallow-submodules https://github.com/google/ngx_brotli
 cd ngx_brotli/deps/brotli
 mkdir out && cd out
-CC=clang cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_FLAGS="-O3 -march=native -mtune=native -flto=thin -funroll-loops -ffunction-sections -fdata-sections" -DCMAKE_CXX_FLAGS="-O3 -march=native -mtune=native -flto=thin -funroll-loops -ffunction-sections -fdata-sections" -DCMAKE_INSTALL_PREFIX=./installed ..
-cmake --build . --config Release --target brotlienc
+CC=clang cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_FLAGS="-O3 -march=native -mtune=native -flto=thin -funroll-loops -ffunction-sections -fdata-sections" -DCMAKE_INSTALL_PREFIX=./installed ..
+MAKEFLAGS=-j"$(nproc)" cmake --build . --config Release --target brotlienc
 cd ../../../..
 mv nginx-release-* nginx
 cd nginx
