@@ -1,9 +1,16 @@
+#!/bin/sh
+
 set -e
 rm -rf nginx ngx_brotli openssl nginx.tar.gz
-curl -o nginx.tar.gz https://hg.nginx.org/nginx/archive/release-1.25.1.tar.gz
+curl -o nginx.tar.gz https://hg.nginx.org/nginx/archive/release-1.25.3.tar.gz
 tar xvzf nginx.tar.gz
-git clone --depth=1 --recursive --shallow-submodules -b openssl-3.0.9-quic1 https://github.com/quictls/openssl
+git clone --depth=1 --recursive --shallow-submodules -b openssl-3.1.4-quic1 https://github.com/quictls/openssl
 git clone --depth=1 --recursive --shallow-submodules https://github.com/google/ngx_brotli
+cd ngx_brotli/deps/brotli
+mkdir out && cd out
+CC=clang cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_FLAGS="-O3 -march=native -mtune=native -flto=thin -funroll-loops -ffunction-sections -fdata-sections" -DCMAKE_CXX_FLAGS="-O3 -march=native -mtune=native -flto=thin -funroll-loops -ffunction-sections -fdata-sections" -DCMAKE_INSTALL_PREFIX=./installed ..
+cmake --build . --config Release --target brotlienc
+cd ../../../..
 mv nginx-release-* nginx
 cd nginx
 ./auto/configure \
@@ -34,10 +41,10 @@ cd nginx
 	--add-module=../ngx_brotli \
 	--with-openssl=../openssl \
 	--with-openssl-opt=enable-ktls \
-	--with-cc-opt="-O3 -march=native -flto -Wno-sign-compare" \
-	--with-ld-opt="-fuse-ld=mold -flto" \
+	--with-cc-opt="-O3 -march=native -flto=thin -Wno-sign-compare" \
+	--with-ld-opt="-fuse-ld=mold -flto=thin" \
 	--with-cc="clang"
-make -j$(nproc)
+make -j"$(nproc)"
 make install
 cd ..
 mkdir -p /etc/nginx/http.d/ /etc/nginx/snippets/
@@ -50,3 +57,9 @@ fi
 install -Dm755 nginx.initd /etc/init.d/nginx
 install -Dm644 nginx.confd /etc/conf.d/nginx
 openssl rand 80 >/etc/nginx/ticket.key
+
+# create default tls certs with dummy data
+openssl req -x509 -nodes -days 3650 -newkey rsa:2048 \
+	-keyout /etc/ssl/private/ssl-cert-default.key \
+	-out /etc/ssl/certs/ssl-cert-default.pem \
+	-subj "/C=US/ST=New York/L=New York/O=Your Organization/OU=Your Organizational Unit/CN=example.com/emailAddress=your.email@example.com"
