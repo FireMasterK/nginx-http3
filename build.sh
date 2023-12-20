@@ -6,11 +6,16 @@ curl -o nginx.tar.gz https://hg.nginx.org/nginx/archive/release-1.25.3.tar.gz
 tar xvzf nginx.tar.gz
 git clone --depth=1 --recursive --shallow-submodules -b openssl-3.1.4-quic1 https://github.com/quictls/openssl
 git clone --depth=1 --recursive --shallow-submodules https://github.com/google/ngx_brotli
+git clone --depth=1 --recursive --shallow-submodules https://github.com/zlib-ng/zlib-ng
 cd ngx_brotli/deps/brotli
 mkdir out && cd out
 CC=clang cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_FLAGS="-O3 -march=native -mtune=native -flto=thin -funroll-loops -ffunction-sections -fdata-sections" -DCMAKE_INSTALL_PREFIX=./installed ..
 MAKEFLAGS=-j"$(nproc)" cmake --build . --config Release --target brotlienc
 cd ../../../..
+cd zlib-ng
+CC=clang CXX=clang++ cmake -DWITH_NATIVE_INSTRUCTIONS=ON -DZLIB_COMPAT=ON -DCMAKE_LINKER=mold -DCMAKE_C_FLAGS="-O3 -march=native -mtune=native -flto=thin" -DCMAKE_LINKER=mold -DCMAKE_CXX_FLAGS="-O3 -march=native -mtune=native -flto=thin" .
+MAKEFLAGS=-j"$(nproc)" cmake --build . --config Release
+cd ..
 mv nginx-release-* nginx
 cd nginx
 ./auto/configure \
@@ -41,8 +46,8 @@ cd nginx
 	--add-module=../ngx_brotli \
 	--with-openssl=../openssl \
 	--with-openssl-opt=enable-ktls \
-	--with-cc-opt="-O3 -march=native -flto=thin -Wno-sign-compare" \
-	--with-ld-opt="-fuse-ld=mold -flto=thin" \
+	--with-cc-opt="-O3 -march=native -flto=thin -Wno-sign-compare -I ..$(pwd)/../zlib-ng/include" \
+	--with-ld-opt="-fuse-ld=mold -flto=thin -L ..$(pwd)/../zlib-ng/lib" \
 	--with-cc="clang"
 make -j"$(nproc)"
 make install

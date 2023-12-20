@@ -2,3 +2,4 @@ nginx/
 openssl/
 *.tar.gz
 Dockerfile
+*.log

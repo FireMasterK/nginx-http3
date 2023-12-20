@@ -8,7 +8,6 @@ RUN --mount=type=cache,target=/var/cache/apk \
     libc-dev \
     make \
     pcre-dev \
-    zlib-dev \
     curl \
     git \
     cmake \
@@ -22,8 +21,10 @@ RUN --mount=type=cache,target=/var/cache/apk \
     perl
 
 COPY *.conf nginx.*d ./
-COPY build.sh .
 COPY setup-user.sh .
 
 RUN ./setup-user.sh
+
+COPY build.sh .
+
 RUN ./build.sh

@@ -3,3 +3,4 @@ openssl/
 ngx_brotli/
 zlib-ng/
 *.tar.gz
+*.log

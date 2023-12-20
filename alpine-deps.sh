@@ -4,7 +4,6 @@ apk add gcc \
     libc-dev \
     make \
     pcre-dev \
-    zlib-dev \
     curl \
     git \
     cmake \
