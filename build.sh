@@ -1,7 +1,7 @@
 #!/bin/sh
 
 set -e
-rm -rf nginx ngx_brotli openssl nginx.tar.gz
+rm -rf nginx ngx_brotli openssl nginx.tar.gz zlib-ng
 curl -o nginx.tar.gz https://hg.nginx.org/nginx/archive/release-1.25.3.tar.gz
 tar xvzf nginx.tar.gz
 git clone --depth=1 --recursive --shallow-submodules -b openssl-3.1.4-quic1 https://github.com/quictls/openssl
@@ -13,7 +13,7 @@ CC=clang cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_FLAG
 MAKEFLAGS=-j"$(nproc)" cmake --build . --config Release --target brotlienc
 cd ../../../..
 cd zlib-ng
-CC=clang CXX=clang++ cmake -DWITH_NATIVE_INSTRUCTIONS=ON -DZLIB_COMPAT=ON -DCMAKE_LINKER=mold -DCMAKE_C_FLAGS="-O3 -march=native -mtune=native -flto=thin" -DCMAKE_LINKER=mold -DCMAKE_CXX_FLAGS="-O3 -march=native -mtune=native -flto=thin" .
+CC=clang CXX=clang++ cmake -DWITH_NATIVE_INSTRUCTIONS=ON -DZLIB_COMPAT=ON -DCMAKE_C_FLAGS="-O3 -march=native -mtune=native -fuse-ld=mold -flto=thin" -DCMAKE_CXX_FLAGS="-O3 -march=native -mtune=native -fuse-ld=mold -flto=thin" -DWITH_ARMV6=OFF .
 MAKEFLAGS=-j"$(nproc)" cmake --build . --config Release
 cd ..
 mv nginx-release-* nginx
