@@ -18,7 +18,8 @@ RUN --mount=type=cache,target=/var/cache/apk \
     llvm-dev \
     linux-headers \
     openssl \
-    perl
+    perl \
+    go
 
 COPY *.conf nginx.*d ./
 COPY setup-user.sh .

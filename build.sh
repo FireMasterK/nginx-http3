@@ -1,10 +1,11 @@
 #!/bin/sh
 
 set -e
-rm -rf nginx ngx_brotli openssl nginx.tar.gz zlib-ng
-curl -o nginx.tar.gz https://hg.nginx.org/nginx/archive/release-1.25.3.tar.gz
+nginx_version=1.31.2
+rm -rf nginx ngx_brotli aws-lc aws-lc-install zlib-ng
+curl -o nginx.tar.gz "https://nginx.org/download/nginx-${nginx_version}.tar.gz"
 tar xvzf nginx.tar.gz
-git clone --depth=1 --recursive --shallow-submodules -b openssl-3.1.4-quic1 https://github.com/quictls/openssl
+git clone --depth=1 https://github.com/aws/aws-lc.git
 git clone --depth=1 --recursive --shallow-submodules https://github.com/google/ngx_brotli
 git clone --depth=1 --recursive --shallow-submodules https://github.com/zlib-ng/zlib-ng
 cd ngx_brotli/deps/brotli
@@ -12,13 +13,26 @@ mkdir out && cd out
 CC=clang cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DCMAKE_C_FLAGS="-O3 -march=native -mtune=native -flto=thin -funroll-loops -ffunction-sections -fdata-sections" -DCMAKE_INSTALL_PREFIX=./installed ..
 MAKEFLAGS=-j"$(nproc)" cmake --build . --config Release --target brotlienc
 cd ../../../..
+cd aws-lc
+CC=clang CXX=clang++ cmake -DCMAKE_BUILD_TYPE=Release \
+	-DBUILD_SHARED_LIBS=OFF \
+	-DBUILD_TESTING=OFF \
+	-DBUILD_TOOL=OFF \
+	-DCMAKE_INSTALL_PREFIX="$(pwd)/../aws-lc-install" \
+	-DCMAKE_C_FLAGS="-O3 -march=native -mtune=native -flto=thin" \
+	-DCMAKE_CXX_FLAGS="-O3 -march=native -mtune=native -flto=thin" \
+	.
+MAKEFLAGS=-j"$(nproc)" cmake --build . --config Release
+cmake --install .
+cd ..
 cd zlib-ng
 CC=clang CXX=clang++ cmake -DWITH_NATIVE_INSTRUCTIONS=ON -DZLIB_COMPAT=ON -DCMAKE_C_FLAGS="-O3 -march=native -mtune=native -fuse-ld=mold -flto=thin" -DCMAKE_CXX_FLAGS="-O3 -march=native -mtune=native -fuse-ld=mold -flto=thin" -DWITH_ARMV6=OFF .
 MAKEFLAGS=-j"$(nproc)" cmake --build . --config Release
 cd ..
-mv nginx-release-* nginx
+mv "nginx-${nginx_version}" nginx
+build_root=$(pwd)
 cd nginx
-./auto/configure \
+./configure \
 	--prefix=/var/lib/nginx \
 	--sbin-path=/usr/sbin/nginx \
 	--modules-path=/etc/nginx/modules \
@@ -44,10 +58,8 @@ cd nginx
 	--with-http_addition_module \
 	--with-stream_ssl_preread_module \
 	--add-module=../ngx_brotli \
-	--with-openssl=../openssl \
-	--with-openssl-opt=enable-ktls \
-	--with-cc-opt="-O3 -march=native -flto=thin -Wno-sign-compare -I ..$(pwd)/../zlib-ng/include" \
-	--with-ld-opt="-fuse-ld=mold -flto=thin -L ..$(pwd)/../zlib-ng/lib" \
+	--with-cc-opt="-O3 -march=native -flto=thin -Wno-sign-compare -I${build_root}/zlib-ng/include -I${build_root}/aws-lc-install/include" \
+	--with-ld-opt="-fuse-ld=mold -flto=thin -L${build_root}/zlib-ng/lib -L${build_root}/aws-lc-install/lib -lstdc++" \
 	--with-cc="clang"
 make -j"$(nproc)"
 make install

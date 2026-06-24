@@ -1,5 +1,8 @@
 nginx/
-openssl/
+ngx_brotli/
+aws-lc/
+aws-lc-install/
+zlib-ng/
 *.tar.gz
 Dockerfile
 *.log

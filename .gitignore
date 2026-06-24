@@ -2,5 +2,7 @@ nginx/
 openssl/
 ngx_brotli/
 zlib-ng/
+aws-lc/
+aws-lc-install/
 *.tar.gz
 *.log

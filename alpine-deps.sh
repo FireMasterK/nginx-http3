@@ -14,7 +14,8 @@ apk add gcc \
     llvm-dev \
     linux-headers \
     openssl \
-    perl
+    perl \
+    go
 
 ARCH=$(uname -m)
 
